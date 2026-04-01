@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Easter Egg Challenge</title>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --yellow:  #FFD93D;
+    --pink:    #FF6B9D;
+    --mint:    #6BCB77;
+    --sky:     #4D96FF;
+    --lavender:#C77DFF;
+    --orange:  #FF9A3C;
+    --cream:   #FFFBF0;
+    --dark:    #2D2D2D;
+    --font-display: -apple-system, "SF Pro Rounded", "Helvetica Neue", Arial, sans-serif;
+    --font-body:    -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  body {
+    background: var(--cream);
+    font-family: var(--font-body);
+    color: var(--dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Confetti background ── */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(circle 6px at 8% 12%, #FFD93D88 0%, transparent 60%),
+      radial-gradient(circle 4px at 92% 8%,  #FF6B9D88 0%, transparent 60%),
+      radial-gradient(circle 5px at 15% 85%, #6BCB7788 0%, transparent 60%),
+      radial-gradient(circle 7px at 85% 80%, #C77DFF88 0%, transparent 60%),
+      radial-gradient(circle 4px at 50% 5%,  #4D96FF88 0%, transparent 60%),
+      radial-gradient(circle 5px at 5%  50%, #FF9A3C88 0%, transparent 60%),
+      radial-gradient(circle 3px at 95% 50%, #FFD93D88 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 36px 28px 48px;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+    position: relative;
+  }
+
+  .header-band {
+    background: linear-gradient(135deg, var(--pink) 0%, var(--lavender) 50%, var(--sky) 100%);
+    border-radius: 28px;
+    padding: 32px 24px 28px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(199,125,255,0.35);
+  }
+
+  .header-band::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 18px,
+      rgba(255,255,255,0.07) 18px,
+      rgba(255,255,255,0.07) 36px
+    );
+  }
+
+  .deco-eggs {
+    position: absolute;
+    font-size: 2rem;
+    opacity: 0.55;
+    animation: float 4s ease-in-out infinite;
+  }
+  .deco-eggs:nth-child(1) { top: 8px; left: 18px; animation-delay: 0s; }
+  .deco-eggs:nth-child(2) { top: 10px; right: 22px; animation-delay: 0.8s; }
+  .deco-eggs:nth-child(3) { bottom: 10px; left: 60px; animation-delay: 1.4s; }
+  .deco-eggs:nth-child(4) { bottom: 8px; right: 55px; animation-delay: 2s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50%       { transform: translateY(-8px) rotate(5deg); }
+  }
+
+  .subtitle-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.25);
+    border: 2px solid rgba(255,255,255,0.5);
+    color: #fff;
+    font-family: var(--font-body);
+    font-weight: 800;
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 4px 16px;
+    border-radius: 100px;
+    margin-bottom: 14px;
+  }
+
+  .main-title {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: clamp(2.6rem, 7vw, 4rem);
+    color: #fff;
+    line-height: 1.05;
+    text-shadow: 0 4px 16px rgba(0,0,0,0.18), 0 2px 0 rgba(0,0,0,0.1);
+    letter-spacing: 0.02em;
+    margin-bottom: 6px;
+  }
+
+  .main-emoji {
+    font-size: clamp(2rem, 5vw, 3rem);
+    display: block;
+    margin-bottom: 8px;
+    animation: bounce 1.6s ease-in-out infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0) scale(1); }
+    40%       { transform: translateY(-10px) scale(1.1); }
+    60%       { transform: translateY(-6px) scale(1.05); }
+  }
+
+  /* ── VS Banner ── */
+  .vs-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin: 28px 0;
+  }
+
+  .team-pill {
+    flex: 1;
+    max-width: 240px;
+    padding: 18px 10px;
+    border-radius: 20px;
+    text-align: center;
+    font-family: var(--font-display); font-weight: 800;
+    font-size: 1.7rem;
+    letter-spacing: 0.05em;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.14);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .team-a {
+    background: linear-gradient(135deg, #FF6B9D, #FF9A3C);
+    color: #fff;
+    transform: rotate(-2deg);
+  }
+  .team-b {
+    background: linear-gradient(135deg, #4D96FF, #6BCB77);
+    color: #fff;
+    transform: rotate(2deg);
+  }
+
+  .team-pill .team-emoji { font-size: 2rem; display: block; margin-bottom: 4px; }
+  .team-pill .team-sub   { font-family: var(--font-body); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.85; }
+
+  .vs-circle {
+    width: 60px; height: 60px;
+    background: var(--yellow);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--dark);
+    box-shadow: 0 4px 16px rgba(255,217,61,0.5);
+    flex-shrink: 0;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 4px 16px rgba(255,217,61,0.5); }
+    50%       { transform: scale(1.08); box-shadow: 0 6px 24px rgba(255,217,61,0.7); }
+  }
+
+  /* ── Games list (1 per row) ── */
+  .section-label {
+    text-align: center;
+    font-family: var(--font-display); font-weight: 800;
+    font-size: 1.4rem;
+    color: var(--dark);
+    margin-bottom: 18px;
+    letter-spacing: 0.04em;
+  }
+  .section-label span {
+    background: var(--yellow);
+    padding: 2px 14px;
+    border-radius: 100px;
+  }
+
+  .games-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .game-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 3px 16px rgba(0,0,0,0.09);
+    cursor: pointer;
+    transition: transform 0.18s, box-shadow 0.18s;
+    user-select: none;
+  }
+  .game-card:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.14);
+  }
+  .game-card:active { transform: scale(0.98); }
+
+  /* Left colour accent bar */
+  .game-card::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 6px;
+    border-radius: 18px 0 0 18px;
+  }
+  .game-card:nth-child(1)::before { background: linear-gradient(180deg, var(--mint), #4ADE80); }
+  .game-card:nth-child(2)::before { background: linear-gradient(180deg, var(--sky), var(--lavender)); }
+  .game-card:nth-child(3)::before { background: linear-gradient(180deg, var(--orange), var(--yellow)); }
+  .game-card:nth-child(4)::before { background: linear-gradient(180deg, var(--pink), var(--lavender)); }
+  .game-card:nth-child(5)::before { background: linear-gradient(180deg, var(--yellow), var(--orange)); }
+
+  .game-accent {
+    width: 72px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px 6px 18px 18px;
+  }
+
+  .game-icon {
+    font-size: 2.4rem;
+    line-height: 1;
+    display: block;
+  }
+
+  .game-body {
+    flex: 1;
+    padding: 16px 12px;
+  }
+
+  .game-name {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: 1.15rem;
+    color: var(--dark);
+    line-height: 1.2;
+    margin-bottom: 3px;
+  }
+
+  .game-tagline {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #888;
+    line-height: 1.35;
+  }
+
+  .game-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 18px;
+    flex-shrink: 0;
+  }
+
+  .game-number {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    font-family: var(--font-display); font-weight: 800;
+    font-size: 0.9rem;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+  }
+  .game-card:nth-child(1) .game-number { background: var(--mint); }
+  .game-card:nth-child(2) .game-number { background: var(--sky); }
+  .game-card:nth-child(3) .game-number { background: var(--orange); }
+  .game-card:nth-child(4) .game-number { background: var(--pink); }
+  .game-card:nth-child(5) .game-number { background: var(--yellow); color: var(--dark); }
+
+  .tap-hint {
+    font-size: 0.62rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #bbb;
+  }
+
+  /* ── Modal popup ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s;
+  }
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal-box {
+    background: #fff;
+    border-radius: 28px;
+    max-width: 480px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.22);
+    transform: scale(0.88) translateY(20px);
+    transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .modal-overlay.open .modal-box {
+    transform: scale(1) translateY(0);
+  }
+
+  .modal-header {
+    padding: 28px 28px 20px;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .modal-icon { font-size: 3.2rem; flex-shrink: 0; line-height: 1; }
+
+  .modal-title-wrap { flex: 1; }
+  .modal-num {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .modal-title {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: 1.6rem;
+    color: var(--dark);
+    line-height: 1.1;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 18px; right: 18px;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    color: #666;
+    transition: background 0.15s;
+  }
+  .modal-close:hover { background: #e0e0e0; }
+
+  .modal-accent-bar {
+    height: 5px;
+    margin: 0 28px;
+    border-radius: 100px;
+  }
+
+  .modal-body {
+    padding: 20px 28px 28px;
+  }
+
+  .modal-section {
+    margin-bottom: 16px;
+  }
+  .modal-section:last-child { margin-bottom: 0; }
+
+  .modal-section-label {
+    font-size: 0.68rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: #aaa;
+    margin-bottom: 6px;
+  }
+
+  .modal-section-text {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--dark);
+    line-height: 1.5;
+  }
+
+  .modal-rules {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modal-rule {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--dark);
+    line-height: 1.4;
+  }
+  .modal-rule-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  .modal-prize {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #FFF8E1;
+    border: 1.5px solid var(--yellow);
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #7a5c00;
+  }
+
+  /* ── Scoring strip ── */
+  .scoring-strip {
+    background: linear-gradient(135deg, #2D2D2D, #444);
+    border-radius: 20px;
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+    flex-wrap: wrap;
+  }
+
+  .score-item {
+    text-align: center;
+  }
+  .score-value {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: 2rem;
+    line-height: 1;
+  }
+  .score-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.6);
+    margin-top: 2px;
+  }
+  .score-divider {
+    width: 1px; height: 48px;
+    background: rgba(255,255,255,0.15);
+  }
+
+  /* ── Prizes footer ── */
+  .prizes-row {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .prize-card {
+    flex: 1;
+    border-radius: 18px;
+    padding: 18px 16px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .prize-card.team-prize {
+    background: linear-gradient(135deg, #FFF3D4, #FFE9A0);
+    border: 2px solid var(--yellow);
+  }
+  .prize-card.mvp-prize {
+    background: linear-gradient(135deg, #F3E5FF, #E5D4FF);
+    border: 2px solid var(--lavender);
+  }
+
+  .prize-icon { font-size: 2.2rem; }
+  .prize-title {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: 1rem;
+    color: var(--dark);
+  }
+  .prize-desc {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #666;
+    line-height: 1.4;
+  }
+
+  /* ── Footer tagline ── */
+  .tagline {
+    text-align: center;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--mint), var(--sky));
+    border-radius: 16px;
+    font-family: var(--font-display); font-weight: 800;
+    font-size: 1.1rem;
+    color: #fff;
+    letter-spacing: 0.04em;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  /* ── Mobile — small phones ── */
+  @media (max-width: 480px) {
+    .page { padding: 20px 16px 36px; }
+    .header { margin-bottom: 20px; }
+    .header-band { padding: 24px 16px 20px; border-radius: 20px; }
+    .main-title { font-size: 2rem; }
+    .main-emoji { font-size: 2.2rem; }
+    .deco-eggs { font-size: 1.4rem; }
+    .deco-eggs:nth-child(3), .deco-eggs:nth-child(4) { display: none; }
+    .vs-banner { gap: 10px; margin: 20px 0; }
+    .team-pill { padding: 14px 8px; font-size: 1.35rem; border-radius: 16px; max-width: none; }
+    .team-pill .team-emoji { font-size: 1.6rem; }
+    .team-pill .team-sub { font-size: 0.65rem; }
+    .vs-circle { width: 48px; height: 48px; font-size: 1.15rem; }
+    .section-label { font-size: 1.05rem; margin-bottom: 14px; }
+    .section-label span { padding: 3px 12px; }
+    .games-list { gap: 10px; margin-bottom: 20px; }
+    .game-card { border-radius: 14px; }
+    .game-accent { width: 56px; padding: 14px 4px 14px 14px; }
+    .game-icon { font-size: 1.9rem; }
+    .game-body { padding: 13px 8px; }
+    .game-name { font-size: 1rem; }
+    .game-tagline { font-size: 0.72rem; }
+    .game-right { padding: 10px 13px; gap: 4px; }
+    .game-number { width: 24px; height: 24px; font-size: 0.8rem; }
+    .tap-hint { font-size: 0.58rem; }
+    .scoring-strip { padding: 16px 14px; border-radius: 16px; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .score-divider { display: none; }
+    .score-item { min-width: calc(33% - 10px); }
+    .score-value { font-size: 1.5rem; }
+    .score-label { font-size: 0.6rem; }
+    .prizes-row { flex-direction: column; gap: 10px; margin-bottom: 16px; }
+    .prize-card { padding: 14px 12px; flex-direction: row; text-align: left; gap: 12px; border-radius: 14px; }
+    .prize-icon { font-size: 1.8rem; flex-shrink: 0; }
+    .prize-title { font-size: 0.95rem; }
+    .prize-desc { font-size: 0.72rem; }
+    .tagline { font-size: 0.9rem; padding: 13px 10px; border-radius: 13px; }
+    .modal-overlay { padding: 0; align-items: flex-end; }
+    .modal-box { border-radius: 24px 24px 0 0; max-height: 88vh; overflow-y: auto; width: 100%; transform: translateY(60px); }
+    .modal-overlay.open .modal-box { transform: translateY(0); }
+    .modal-header { padding: 22px 18px 16px; gap: 12px; }
+    .modal-icon { font-size: 2.4rem; }
+    .modal-title { font-size: 1.35rem; }
+    .modal-num { font-size: 0.65rem; }
+    .modal-close { width: 30px; height: 30px; font-size: 0.95rem; top: 14px; right: 14px; }
+    .modal-accent-bar { margin: 0 18px; }
+    .modal-body { padding: 16px 18px 32px; }
+    .modal-section { margin-bottom: 14px; }
+    .modal-section-label { font-size: 0.63rem; }
+    .modal-section-text { font-size: 0.84rem; }
+    .modal-rule { font-size: 0.8rem; gap: 8px; }
+    .modal-prize { font-size: 0.78rem; padding: 5px 12px; }
+  }
+
+  /* ── Mobile — medium / small tablets ── */
+  @media (min-width: 481px) and (max-width: 680px) {
+    .page { padding: 26px 20px 40px; }
+    .main-title { font-size: 2.6rem; }
+    .team-pill { font-size: 1.5rem; }
+    .scoring-strip { flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .score-divider { display: none; }
+    .score-item { min-width: calc(30% - 10px); }
+    .prizes-row { gap: 10px; }
+    .modal-overlay { padding: 0; align-items: flex-end; }
+    .modal-box { border-radius: 24px 24px 0 0; max-height: 85vh; overflow-y: auto; width: 100%; }
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { background: #fff; }
+    body::before { display: none; }
+    .page { max-width: 100%; padding: 16px; }
+    .game-card, .prize-card, .scoring-strip, .header-band { box-shadow: none !important; }
+    @page { size: A4; margin: 10mm; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ HEADER ══ -->
+  <div class="header">
+    <div class="header-band">
+      <span class="deco-eggs">🥚</span>
+      <span class="deco-eggs">🐰</span>
+      <span class="deco-eggs">🌷</span>
+      <span class="deco-eggs">🌸</span>
+      <span class="main-emoji">🐣</span>
+      <p class="subtitle-tag">After-lunch celebration</p>
+      <h1 class="main-title">Easter Egg Challenge</h1>
+    </div>
+  </div>
+
+  <!-- ══ TEAM VS BANNER ══ -->
+  <div class="vs-banner">
+    <div class="team-pill team-a">
+      <span class="team-emoji">🔴</span>
+      Team A
+      <div class="team-sub">are you ready?</div>
+    </div>
+    <div class="vs-circle">VS</div>
+    <div class="team-pill team-b">
+      <span class="team-emoji">🔵</span>
+      Team B
+      <div class="team-sub">bring it on!</div>
+    </div>
+  </div>
+
+  <!-- ══ GAMES ══ -->
+  <p class="section-label"><span>🎮 5 Epic Challenges — tap to learn more!</span></p>
+
+  <div class="games-list">
+
+    <div class="game-card" onclick="openModal(0)">
+      <div class="game-accent"><span class="game-icon">🥄</span></div>
+      <div class="game-body">
+        <div class="game-name">Egg Spoon Relay</div>
+        <div class="game-tagline">Balance, speed &amp; clean handovers 🏃</div>
+      </div>
+      <div class="game-right">
+        <div class="game-number">1</div>
+        <div class="tap-hint">tap ↗</div>
+      </div>
+    </div>
+
+    <div class="game-card" onclick="openModal(1)">
+      <div class="game-accent"><span class="game-icon">🥚</span></div>
+      <div class="game-body">
+        <div class="game-name">Egg Toss</div>
+        <div class="game-tagline">Pairs throw, step back &amp; survive the longest 🤞</div>
+      </div>
+      <div class="game-right">
+        <div class="game-number">2</div>
+        <div class="tap-hint">tap ↗</div>
+      </div>
+    </div>
+
+    <div class="game-card" onclick="openModal(2)">
+      <div class="game-accent"><span class="game-icon">🧠</span></div>
+      <div class="game-body">
+        <div class="game-name">Easter Quiz</div>
+        <div class="game-tagline">Fast answers, team rotation &amp; bonus steals 🐇</div>
+      </div>
+      <div class="game-right">
+        <div class="game-number">3</div>
+        <div class="tap-hint">tap ↗</div>
+      </div>
+    </div>
+
+    <div class="game-card" onclick="openModal(3)">
+      <div class="game-accent"><span class="game-icon">🔍</span></div>
+      <div class="game-body">
+        <div class="game-name">Egg Hunt</div>
+        <div class="game-tagline">Search area challenge with hidden point values 🌿</div>
+      </div>
+      <div class="game-right">
+        <div class="game-number">4</div>
+        <div class="tap-hint">tap ↗</div>
+      </div>
+    </div>
+
+    <div class="game-card" onclick="openModal(4)">
+      <div class="game-accent"><span class="game-icon">🎯</span></div>
+      <div class="game-body">
+        <div class="game-name">Golden Egg Shot</div>
+        <div class="game-tagline">Direct throw into target cups — no bounce allowed! 🏆</div>
+      </div>
+      <div class="game-right">
+        <div class="game-number">5</div>
+        <div class="tap-hint">tap ↗</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ MODAL ══ -->
+  <div class="modal-overlay" id="modal" onclick="handleOverlayClick(event)">
+    <div class="modal-box" id="modal-box">
+      <div class="modal-header" id="modal-header">
+        <span class="modal-icon" id="modal-icon"></span>
+        <div class="modal-title-wrap">
+          <div class="modal-num" id="modal-num"></div>
+          <div class="modal-title" id="modal-title"></div>
+        </div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-accent-bar" id="modal-bar"></div>
+      <div class="modal-body">
+        <div class="modal-section">
+          <div class="modal-section-label">Objective</div>
+          <div class="modal-section-text" id="modal-objective"></div>
+        </div>
+        <div class="modal-section">
+          <div class="modal-section-label">How it works</div>
+          <div class="modal-rules" id="modal-rules"></div>
+        </div>
+        <div class="modal-section">
+          <div class="modal-section-label">Individual prize</div>
+          <div id="modal-prize"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCORING ══ -->
+  <div class="scoring-strip">
+    <div class="score-item">
+      <div class="score-value" style="color: var(--yellow);">3 pts</div>
+      <div class="score-label">🥇 Winner</div>
+    </div>
+    <div class="score-divider"></div>
+    <div class="score-item">
+      <div class="score-value" style="color: #aaa;">2 pts</div>
+      <div class="score-label">🥈 Runner-up</div>
+    </div>
+    <div class="score-divider"></div>
+    <div class="score-item">
+      <div class="score-value" style="color: var(--mint);">×5</div>
+      <div class="score-label">🎮 Challenges</div>
+    </div>
+    <div class="score-divider"></div>
+    <div class="score-item">
+      <div class="score-value" style="color: var(--pink);">15 pts</div>
+      <div class="score-label">🏆 Max Score</div>
+    </div>
+    <div class="score-divider"></div>
+    <div class="score-item">
+      <div class="score-value" style="color: var(--orange);">🎯</div>
+      <div class="score-label">Tiebreaker: Golden Shot</div>
+    </div>
+  </div>
+
+  <!-- ══ PRIZES ══ -->
+  <div class="prizes-row">
+    <div class="prize-card team-prize">
+      <span class="prize-icon">🐰</span>
+      <div class="prize-title">Winning Team</div>
+      <div class="prize-desc">Giant chocolate bunny for the team with the most points overall</div>
+    </div>
+    <div class="prize-card mvp-prize">
+      <span class="prize-icon">🍫</span>
+      <div class="prize-title">Activity MVPs</div>
+      <div class="prize-desc">One mini chocolate per challenge for the standout individual or best pair</div>
+    </div>
+  </div>
+
+  <!-- ══ FOOTER ══ -->
+  <div class="tagline">
+    🌷 Happy Easter — may the best team win! 🌷
+  </div>
+
+</div>
+
+<script>
+const games = [
+  {
+    icon: "🥄",
+    num: "Challenge 1 of 5",
+    title: "Egg Spoon Relay",
+    color: "#6BCB77",
+    objective: "Complete the full relay as a team in the shortest total time — without dropping the egg!",
+    rules: [
+      { dot: "#6BCB77", text: "Players run one at a time in order: 1 → 2 → 3 → 4" },
+      { dot: "#6BCB77", text: "Each player carries the egg on a spoon from start to finish and back" },
+      { dot: "#6BCB77", text: "If the egg drops, that player must restart their leg from the marked point" },
+      { dot: "#6BCB77", text: "The spoon is handed to the next teammate after each leg" },
+    ],
+    prize: "🍫 Mini chocolate for the cleanest & fastest individual leg"
+  },
+  {
+    icon: "🥚",
+    num: "Challenge 2 of 5",
+    title: "Egg Toss",
+    color: "#4D96FF",
+    objective: "Keep the egg intact for the greatest throwing distance — the last pair standing wins for the team!",
+    rules: [
+      { dot: "#4D96FF", text: "Each team forms 2 pairs: Pair 1 (players 1 & 2) and Pair 2 (players 3 & 4)" },
+      { dot: "#4D96FF", text: "Start with a short toss — after each successful catch, both partners take one step back" },
+      { dot: "#4D96FF", text: "If the egg drops or breaks, that pair is eliminated from the round" },
+      { dot: "#4D96FF", text: "The team whose pair survives the furthest distance wins the activity" },
+    ],
+    prize: "🍫 Mini chocolate for both players of the strongest surviving pair"
+  },
+  {
+    icon: "🧠",
+    num: "Challenge 3 of 5",
+    title: "Easter Quiz",
+    color: "#FF9A3C",
+    objective: "Answer more Easter-themed questions correctly than the other team — think fast!",
+    rules: [
+      { dot: "#FF9A3C", text: "Players answer in rotation so everyone gets at least one direct question" },
+      { dot: "#FF9A3C", text: "Teams alternate turns throughout the quiz" },
+      { dot: "#FF9A3C", text: "If the active player misses, the other team may steal the point (when host allows)" },
+      { dot: "#FF9A3C", text: "Host selects 10–15 questions from the bank depending on timing" },
+    ],
+    prize: "🍫 Mini chocolate for the player with the most correct individual answers"
+  },
+  {
+    icon: "🔍",
+    num: "Challenge 4 of 5",
+    title: "Egg Hunt",
+    color: "#FF6B9D",
+    objective: "Collect the highest total point score before the 5-minute timer runs out!",
+    rules: [
+      { dot: "#FF6B9D", text: "All players search at the same time inside the defined play area" },
+      { dot: "#FF6B9D", text: "Standard egg = 1 pt · Special egg = 2 pts · Golden egg = 3 pts 🥚" },
+      { dot: "#FF6B9D", text: "Every egg must be physically returned to the scoring station to count" },
+      { dot: "#FF6B9D", text: "Team winner = highest combined point total from all team members" },
+    ],
+    prize: "🍫 Mini chocolate for the player who finds the most eggs or most points"
+  },
+  {
+    icon: "🎯",
+    num: "Challenge 5 of 5 · Tiebreaker",
+    title: "Golden Egg Shot",
+    color: "#FFD93D",
+    colorText: "#7a5c00",
+    objective: "Score the highest combined total by landing eggs directly into the target cups!",
+    rules: [
+      { dot: "#FFD93D", text: "Each team gets 8 eggs — 2 throws per player" },
+      { dot: "#FFD93D", text: "Close cup = 1 pt · Middle cup = 2 pts · Far cup = 3 pts 🎯" },
+      { dot: "#FFD93D", text: "No bouncing allowed — only direct entries count toward the score" },
+      { dot: "#FFD93D", text: "This activity also serves as the event tiebreaker if scores are level" },
+    ],
+    prize: "🍫 Mini chocolate for the player with the highest personal throwing score"
+  }
+];
+
+function openModal(idx) {
+  const g = games[idx];
+  document.getElementById('modal-icon').textContent    = g.icon;
+  document.getElementById('modal-num').textContent     = g.num;
+  document.getElementById('modal-num').style.color     = g.colorText || g.color;
+  document.getElementById('modal-title').textContent   = g.title;
+  document.getElementById('modal-header').style.background = g.color + '18';
+  document.getElementById('modal-bar').style.background    = g.color;
+  document.getElementById('modal-objective').textContent   = g.objective;
+
+  const rulesEl = document.getElementById('modal-rules');
+  rulesEl.innerHTML = g.rules.map(r =>
+    `<div class="modal-rule">
+       <span class="modal-rule-dot" style="background:${r.dot}"></span>
+       <span>${r.text}</span>
+     </div>`
+  ).join('');
+
+  document.getElementById('modal-prize').innerHTML =
+    `<span class="modal-prize">${g.prize}</span>`;
+
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modal')) closeModal();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</div>
+</body>
+</html>
