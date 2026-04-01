@@ -204,6 +204,15 @@
     padding: 2px 14px;
     border-radius: 100px;
   }
+  .section-sublabel {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #999;
+    letter-spacing: 0.06em;
+    margin-top: 7px;
+    text-transform: uppercase;
+  }
 
   .games-list {
     display: flex;
@@ -536,6 +545,15 @@
     text-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
 
+  .credit {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #bbb;
+    letter-spacing: 0.04em;
+  }
+
   /* ── Mobile — small phones ── */
   @media (max-width: 480px) {
     .page { padding: 20px 16px 36px; }
@@ -645,7 +663,10 @@
   </div>
 
   <!-- ══ GAMES ══ -->
-  <p class="section-label"><span>🎮 5 Epic Challenges — tap to learn more!</span></p>
+  <p class="section-label">
+    <span>🎮 5 Epic Challenges</span>
+    <small class="section-sublabel">Tap any card to learn more</small>
+  </p>
 
   <div class="games-list">
 
@@ -784,8 +805,11 @@
 
   <!-- ══ FOOTER ══ -->
   <div class="tagline">
-    🌷 Happy Easter — may the best team win! 🌷
+    🌷 Happy Easter & Enjoy! 🌷
   </div>
+
+  <!-- ══ CREDIT ══ -->
+  <p class="credit">Design by Aba Sargious ❤️</p>
 
 </div>
 
